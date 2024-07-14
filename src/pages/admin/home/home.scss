@@ -1,0 +1,90 @@
+.admin-home {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+
+  .sidebar {
+    width: 250px;
+    background-color: #f0f0f0;
+    padding: 20px;
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        padding: 10px 0;
+        cursor: pointer;
+      }
+    }
+    a {
+      // Thêm quy tắc này
+      text-decoration: none;
+      color: inherit; // Để thẻ <a> kế thừa màu từ button
+    }
+    .selected {
+      color: #ff0000;
+      font-size: 20px;
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9fafb;
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .search-bar {
+        input {
+          padding: 10px;
+          width: 300px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+        }
+      }
+
+      .header-icons {
+        span {
+          margin-left: 15px;
+          font-size: 20px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .github-banner {
+      background-color: #7c3aed;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    }
+  }
+}
+.admin {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+
+  h3 {
+    color: red;
+    font-size: 30px;
+    font-weight: 400;
+  }
+  h2 {
+    margin-top: 15px;
+  }
+}

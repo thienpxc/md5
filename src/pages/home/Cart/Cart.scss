@@ -1,0 +1,87 @@
+.checkout-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  #fui-toast {
+    /* Style for toast messages */
+  }
+
+  .checkout-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .user-info,
+  .shipping-info,
+  .cart-info {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  }
+
+  .cart-info {
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        margin: 10px 0;
+
+        .cart-item-image {
+          display: block;
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          margin-top: 5px;
+        }
+      }
+    }
+  }
+
+  .total-price {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .checkout-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+}
