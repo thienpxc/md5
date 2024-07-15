@@ -11,4 +11,15 @@ export const userApi = {
   update: (data: User) => {
     return axios.put(`${import.meta.env.VITE_SV}/update`, data);
   },
+  changePassword: (data: User) => {
+    return axios.put(`${import.meta.env.VITE_SV}/changePassword`, data);
+  },
+  searchUser: (name: string) => {
+    return axios.get(`${import.meta.env.VITE_SV}/search?name=${name}`);
+  },
+  paginationUser: (offset: number, limit: number) => {
+    return axios.get(
+      `${import.meta.env.VITE_SV}/pagination?offset=${offset}&limit=${limit}`
+    );
+  },
 };
