@@ -109,6 +109,16 @@ const Header: React.FC = () => {
     i18n.changeLanguage(newLanguage);
     setSelectedLanguage(newLanguage);
   };
+
+  const handleCartClick = (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của Link
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/cart");
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <AppBar position="static" className="header-bar">
       <Toolbar className="toolbar">
@@ -145,13 +155,11 @@ const Header: React.FC = () => {
           <Button color="inherit">{t("call")}</Button>
           <Button color="inherit">{t("shop")}</Button>
           <Button color="inherit">{t("order")}</Button>
-          <Button className="button" color="inherit">
-            <Link to="/cart">
-              {t("cart")}{" "}
-              {orderStore.cart?.details.reduce((result, cur) => {
-                return result + cur.quantity;
-              }, 0) || 0}
-            </Link>
+          <Button className="button" color="inherit" onClick={handleCartClick}>
+            {t("cart")}{" "}
+            {orderStore.cart?.details.reduce((result, cur) => {
+              return result + cur.quantity;
+            }, 0) || 0}
           </Button>
           {/* <Button color="inherit">
             <select

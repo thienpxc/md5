@@ -1,5 +1,6 @@
 import apis from "@/apis";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { appendFileSync } from "fs";
 
 enum Status {
   SHOPPING = "SHOPPING",
@@ -67,6 +68,11 @@ const orderSlice = createSlice({
     });
   },
 });
+const loadReceiptThunk = createAsyncThunk("receipt/loadReceipt", async () => {
+  const response = await apis.address.findAllForUser();
+  return response.data;
+});
+
 
 const loadDataThunk = createAsyncThunk("order/loadDataThunk", async () => {
   const res = await apis.order.getCart();
@@ -79,4 +85,5 @@ export const orderReducer = orderSlice.reducer;
 export const orderActions = {
   ...orderSlice.actions,
   loadDataThunk,
+  loadReceiptThunk,
 };

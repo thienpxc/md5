@@ -56,5 +56,21 @@ export const productApi = {
   },
   newProduct: async () => {
     return await axios.get(`${import.meta.env.VITE_SV}/new-products`);
+  },
+  updateProductStatus: async (id: string, status: boolean) => {
+    return await axios.put(
+      `${import.meta.env.VITE_SV}/admin/products/${id}/status`,
+      {
+        status,
+      }
+    );
+  },
+  updateProductIsFeatured: async (id: string, isFeatured: boolean) => {
+    return await axios.put(
+      `${import.meta.env.VITE_SV}/admin/products/${id}/isFeatured`,
+      {
+        isFeatured,
+      }
+    );
   }
 };

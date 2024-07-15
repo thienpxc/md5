@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { StoreType, useAppDispatch } from "@/stores";
 import { productActions } from "@/stores/slices/product.slices";
+import apis from "@/apis";
+import { showToast } from "@/util/toast";
 
 const ProductAdmin: React.FC = () => {
  const navigate = useNavigate();
@@ -27,6 +29,7 @@ const ProductAdmin: React.FC = () => {
    }
   return (
     <div className="category-list">
+      <div id="fui-toast"></div>
       <h1>{t("product")}</h1>
       <h2>{t("allProduct")}</h2>
 
@@ -66,18 +69,54 @@ const ProductAdmin: React.FC = () => {
                   className="product-image"
                   src={product.productImg[0]?.images}
                   alt={product.name}
+                  style={{ width: "100px", height: "100px" }}
                 />
               </td>
               <td>{product.quantity}</td>
               <td>{product.status ? "Active" : "Inactive"}</td>
-              <td>{product.isFeatured ? "Yes" : "No"}</td>
+              <button
+                onClick={() => {
+                  apis.product
+                    .updateProductIsFeatured(product.id, {
+                      isFeatured: !product.isFeatured,
+                    })
+                    .then(() => {
+                      // Gọi lại dữ liệu sau khi cập nhật thành công
+                      dispatch(productActions.findDataThunk());
+                      // Hiển thị thông báo thành công cho người dùng
+                      showToast.success(
+                        "Cập nhật trạng thái sản phẩm thành công"
+                      );
+                    })
+                    .catch((error) => {
+                      // Xử lý lỗi ở đây, ví dụ: hiển thị thông báo lỗi
+                      showToast.error(
+                        "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm"
+                      );
+                    });
+                }}
+              >
+                <td> {product.isFeatured ? "Mở" : "Không"}</td>
+              </button>
               <td>
                 <button onClick={() => navigate(`edit/${product.id}`)}>
                   {t("edit")}
                 </button>
               </td>
               <td>
-                <button onClick={() => {}}>{t("delete")}</button>
+                <button
+                  onClick={() => {
+                    apis.product
+                      .updateProductStatus(product.id, {
+                        status: !product.status,
+                      })
+                      .then(() => {
+                        dispatch(productActions.findDataThunk());
+                      });
+                  }}
+                >
+                  {t("delete")}
+                </button>
               </td>
             </tr>
           ))}

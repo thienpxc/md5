@@ -15,13 +15,20 @@ export const orderApi = {
     return axios.get(`${import.meta.env.VITE_SV}/order/find-cart`);
   },
 
-  checkOut: async (cartId: number) => {
-    return axios.post(`${import.meta.env.VITE_SV}/order/${cartId}/check-out`);
+  checkOut: async (data: {
+        total: number;
+        addressId: number;
+        id: number;
+      }) => {
+    return axios.post(`${import.meta.env.VITE_SV}/check-out`,data);
   },
   updateQuantity: async (data: { orderDetailId: number; quantity: number }) => {
     return axios.put(`${import.meta.env.VITE_SV}/update-quantity`, data);
   },
   deleteCard: async () => {
     return axios.delete(`${import.meta.env.VITE_SV}/order/clear-cart`);
+  },
+  findAll: async () => {
+    return axios.get(`${import.meta.env.VITE_SV}/find-all-order`);
   },
 };

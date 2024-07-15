@@ -8,6 +8,7 @@ import { userApi } from "./modules/user";
 import { orderApi } from "./modules/order";
 
 import "./axios.instance";
+import { addressApi } from "./modules/apighn";
 
 export default {
   category: categoryApi,
@@ -15,6 +16,6 @@ export default {
   register: registerApi,
   user: userApi,
   product: productApi,
-
-  order: orderApi
+  address: addressApi,
+  order: orderApi,
 };

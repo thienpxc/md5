@@ -81,7 +81,7 @@ export default function EditProduct() {
 
   const handleDeleteImage = (imageId: string) => {
     apis.product.deleteImage(imageId).then((res) => {
-      console.log(res);
+      console.log("hellooo",res);
       // Cập nhật trạng thái để phản ánh việc hình ảnh đã được xóa
       const updatedImages = product?.productImg.filter(
         (img) => img.id !== imageId

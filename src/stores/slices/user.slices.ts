@@ -20,6 +20,55 @@ export interface User {
   isVerified?: boolean;
   createAt?: string;
   updateAt?: string;
+  addresses: Address[];
+}
+
+export interface Address {
+  id?: number;
+  isDefault?: boolean;
+
+  title: string;
+  detail: string;
+  phone: string;
+  name: string;
+
+  ProvinceID: number;
+  ProvinceName: string;
+  DistrictID: number;
+  DistrictName: string;
+  WardCode: string;
+  WardName: string;
+}
+export interface Provine {
+  ProvinceID: number;
+  ProvinceName: string;
+}
+
+export interface District {
+  DistrictID: number;
+  DistrictName: string;
+}
+
+export interface Ward {
+  WardCode: string;
+  WardName: string;
+}
+
+export interface AddressCreate {
+  id?: number;
+  isDefault?: boolean;
+
+  title: string;
+  detail: string;
+  phone: string;
+  name: string;
+
+  provinceID: number;
+  provinceName: string;
+  districtID: number;
+  districtName: string;
+  wardCode: string;
+  wardName: string;
 }
 
 export interface UserState {
