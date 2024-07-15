@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { deleteImage } from "@/firebase";
 import axios from "axios";
 
 export const productApi = {
@@ -57,6 +56,7 @@ export const productApi = {
   newProduct: async () => {
     return await axios.get(`${import.meta.env.VITE_SV}/new-products`);
   },
+
   updateProductStatus: async (id: string, status: boolean) => {
     return await axios.put(
       `${import.meta.env.VITE_SV}/admin/products/${id}/status`,
@@ -73,4 +73,14 @@ export const productApi = {
       }
     );
   }
+
+  searchProduct: async (name: string) => {
+    return await axios.get(`${import.meta.env.VITE_SV}/search?name=${name}`);
+  },
+  paginationProduct: async (offset: number, limit: number) => {
+    return await axios.get(
+      `${import.meta.env.VITE_SV}/pagination?offset=${offset}&limit=${limit}`
+    );
+  },
+
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../category/category.scss";
 import "./product.scss";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,29 +7,115 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { StoreType, useAppDispatch } from "@/stores";
 import { productActions } from "@/stores/slices/product.slices";
-import apis from "@/apis";
+
 import { showToast } from "@/util/toast";
 
+import { Pagination } from "@mui/material";
+import apis from "@/apis";
+import { debounce } from "lodash";
+
+
 const ProductAdmin: React.FC = () => {
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
- const productStore = useSelector((store: StoreType) => store.productsStore);
+  const productStore = useSelector((store: StoreType) => store.productsStore);
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageData, setCurrentPageData] = useState([]);
+  const limit = 3;
 
+  useEffect(() => {
+    const offset = (currentPage - 1) * limit;
+    apis.product.paginationProduct(offset, limit).then((response) => {
+      console.log("Category data:", response.data);
+      const newData = productStore.data?.slice(offset, offset + limit) ?? [];
+      setCurrentPageData(newData);
+    });
+  }, [currentPage, productStore.data]);
 
+  const totalPage = Math.ceil((productStore.data?.length ?? 0) / limit);
+  const handlePageChange = (event: any, page: React.SetStateAction<number>) => {
+    setCurrentPage(page);
+  };
 
+  //search category (su dung debounce cua lodash)
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  // Kiểm tra xem có kết quả tìm kiếm không, nếu có thì hiển thị kết quả tìm kiếm, nếu không thì hiển thị dữ liệu trang hiện tại
+  const dataToShow = searchResult.length > 0 ? searchResult : currentPageData;
 
- useEffect(() => {
-   dispatch(productActions.findDataThunk());
- }, [dispatch]);
+  const performSearch = () => {
+    debouncedSearch(search);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
+  const debouncedSearch = debounce((value: string) => {
+    console.log("Debounced search called with value:", value);
+    if (value === "") {
+      setSearchResult([]);
+    } else {
+      apis.product
+        .searchProduct(value)
+        .then((response) => {
+          console.log("Search API response:", response);
+          setSearchResult(response.data);
+        })
+        .catch((error) => {
+          console.error("Error searching category:", error);
+        });
+    }
+  }, 300);
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    dispatch(productActions.findDataThunk());
+  }, [dispatch]);
   //translation
   const { t } = useTranslation();
 
-   if (!productStore.data) {
-     return <div>Loading...</div>; // hoặc bất kỳ loading indicator nào bạn muốn
-   }
+  if (!productStore.data) {
+    return <div>Loading...</div>; // hoặc bất kỳ loading indicator nào bạn muốn
+  }
+
   return (
     <div className="category-list">
+
       <div id="fui-toast"></div>
+
+      <div className="search-bar">
+        <h1>{t("category")}</h1>
+        <div>
+          <input
+            type="text"
+            placeholder="Search for category"
+            value={search}
+            onChange={handleInputChange}
+          />
+          <button
+            onClick={performSearch}
+            style={{
+              marginLeft: "10px",
+              padding: "5px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              height: "40px",
+            }}
+          >
+            Tìm kiếm
+          </button>
+        </div>
+      </div>
+
       <h1>{t("product")}</h1>
       <h2>{t("allProduct")}</h2>
 
@@ -57,7 +143,7 @@ const ProductAdmin: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {productStore.data?.map((product) => (
+          {dataToShow.map((product) => (
             <tr key={product.id}>
               <td>{product.id}</td>
               <td>{product.name}</td>
@@ -122,6 +208,13 @@ const ProductAdmin: React.FC = () => {
           ))}
         </tbody>
       </table>
+      <Pagination
+        count={totalPage} // Use the calculated total pages
+        page={currentPage} // Current page
+        onChange={handlePageChange} // Handle page change
+        shape="rounded"
+        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      />
     </div>
   );
 };
