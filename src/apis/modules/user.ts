@@ -1,4 +1,4 @@
-import { User } from "@/stores/slices/user.slices";
+import { Password, User } from "@/stores/slices/user.slices";
 import axios from "axios";
 
 export const userApi = {
@@ -11,8 +11,8 @@ export const userApi = {
   update: (data: User) => {
     return axios.put(`${import.meta.env.VITE_SV}/update`, data);
   },
-  changePassword: (data: User) => {
-    return axios.put(`${import.meta.env.VITE_SV}/changePassword`, data);
+  changePassword: (data: Password) => {
+    return axios.put(`${import.meta.env.VITE_SV}/user/change-password`, data);
   },
   searchUser: (name: string) => {
     return axios.get(`${import.meta.env.VITE_SV}/search?name=${name}`);
@@ -21,5 +21,8 @@ export const userApi = {
     return axios.get(
       `${import.meta.env.VITE_SV}/pagination?offset=${offset}&limit=${limit}`
     );
+  },
+  updateUser: (data: User) => {
+    return axios.post(`${import.meta.env.VITE_SV}/user/update`, data);
   },
 };

@@ -25,8 +25,9 @@ const PasswordChange: React.FC = () => {
       const res = await apis.user.changePassword({
         oldPassword: currentPassword, // Mật khẩu cũ
         newPassword: newPassword, // Mật khẩu mới
-        id: userStor.data?.id, // ID người dùng, giả sử bạn đã có nó
+        id: userStor.data?.id // ID người dùng, giả sử bạn đã có nó
       });
+      
       console.log("da vao day", res.data);
       console.log("Update success", res.data);
       alert("Password changed successfully");

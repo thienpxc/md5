@@ -72,7 +72,7 @@ export const productApi = {
         isFeatured,
       }
     );
-  }
+  },
 
   searchProduct: async (name: string) => {
     return await axios.get(`${import.meta.env.VITE_SV}/search?name=${name}`);

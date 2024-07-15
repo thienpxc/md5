@@ -182,6 +182,7 @@
   display: flex;
   flex-wrap: wrap; // Cho phép các hình ảnh chuyển xuống hàng mới nếu không đủ chỗ
   gap: 10px; // Khoảng cách giữa các hình ảnh
+ 
 
   .imgEdit {
     margin-bottom: 5px;
@@ -196,6 +197,10 @@
 .imgEdits {
   position: relative;
   size: 5px;
+  display: flex !important;
+  width: 100px;
+  height: 100px;
+  
 }
 
 .delete-btns {
