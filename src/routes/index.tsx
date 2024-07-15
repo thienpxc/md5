@@ -43,15 +43,15 @@ export default function index() {
               () => import("@pages/home/HomePage/HeroHeader")
             )}
           ></Route>
-          <Route
-            path="category"
-            element={<Category></Category>}
-          ></Route>
+          <Route path="category" element={<Category></Category>}></Route>
           <Route
             path="/category/product/:productId"
             element={<ProductCategory></ProductCategory>}
           ></Route>
-          <Route path="/cart" element={<Cart></Cart>}></Route>
+          <Route
+            path="/cart"
+            element={lazyFnDelay(() => import("@/pages/home/Cart/Cart2"))}
+          ></Route>
           <Route path="/checkout" element={<Checkout></Checkout>}></Route>
           <Route path="/detail/:productId" element={<ProductDetail />} />
         </Route>
