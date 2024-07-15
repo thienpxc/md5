@@ -4,6 +4,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 export enum Role {
   ADMIN = "ADMIN",
   USER = "USER",
+
+}
+export interface Password {
+  oldPassword: string;
+  newPassword: string;
+  id: number | undefined;
 }
 export interface User {
   id: number;

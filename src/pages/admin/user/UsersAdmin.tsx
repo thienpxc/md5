@@ -71,7 +71,7 @@ const ProductAdmin: React.FC = () => {
 
   useEffect(() => {
     if (selectUser) {
-      const tables = ["category", "user"];
+      const tables = ["category", "user", "product", "order" ];
       const result: PermissionItem[] = [];
       for (const i in tables) {
         const perItem: PermissionItem = {

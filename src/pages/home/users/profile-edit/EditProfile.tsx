@@ -36,7 +36,7 @@ const EditProfile = () => {
     };
     // Gọi API update thông tin user
     apis.user
-      .update(updatedData)
+      .updateUser(updatedData)
       .then((res) => {
         console.log("Update success", res.data);
         window.alert("Cập nhật thông tin thành công");
