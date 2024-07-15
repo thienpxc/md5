@@ -8,7 +8,8 @@ import { Table } from "react-bootstrap";
 
 import { useSelector } from "react-redux";
 import { StoreType } from "@/stores";
-
+import { debounce } from "lodash";
+import { Pagination } from "@mui/material";
 interface Permission {
   read: boolean;
   create: boolean;
@@ -25,126 +26,204 @@ interface PermissionItem {
 }
 
 const ProductAdmin: React.FC = () => {
-
   const userStore = useSelector((store: StoreType) => store.userStore);
 
-   const [permission, setPermission] = React.useState<Permission>({
-     read: false,
-     create: false,
-     delete: false,
-     update: false,
-   });
+  const [permission, setPermission] = React.useState<Permission>({
+    read: false,
+    create: false,
+    delete: false,
+    update: false,
+  });
 
-   useEffect(() => {
-     setPermission({
-       ...permission,
-       read:
-         userStore.data?.permission?.includes("user.r") ||
-         userStore.data?.permission?.includes("user.*") ||
-         false,
-       create:
-         userStore.data?.permission?.includes("user.c") ||
-         userStore.data?.permission?.includes("user.*") ||
-         false,
-       delete:
-         userStore.data?.permission?.includes("user.d") ||
-         userStore.data?.permission?.includes("user.*") ||
-         false,
-       update:
-         userStore.data?.permission?.includes("user.u") ||
-         userStore.data?.permission?.includes("user.*") ||
-         false,
-     });
-   }, []);
+  useEffect(() => {
+    setPermission({
+      ...permission,
+      read:
+        userStore.data?.permission?.includes("user.r") ||
+        userStore.data?.permission?.includes("user.*") ||
+        false,
+      create:
+        userStore.data?.permission?.includes("user.c") ||
+        userStore.data?.permission?.includes("user.*") ||
+        false,
+      delete:
+        userStore.data?.permission?.includes("user.d") ||
+        userStore.data?.permission?.includes("user.*") ||
+        false,
+      update:
+        userStore.data?.permission?.includes("user.u") ||
+        userStore.data?.permission?.includes("user.*") ||
+        false,
+    });
+  }, []);
 
-   const [users, setUsers] = useState<User[]>([]);
-   useEffect(() => {
-     apis.user.getAllUser().then((res) => {
-       if (res.status == 200) {
-         setUsers(res.data);
-         console.log("res.data", res.data);
-       }
-     });
-   }, []);
-   const [selectUser, setSelectUser] = useState<User | null>(null);
-   const [perItemList, setPerItemList] = useState<PermissionItem[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  useEffect(() => {
+    apis.user.getAllUser().then((res) => {
+      if (res.status == 200) {
+        setUsers(res.data);
+        console.log("tat ca user", res.data);
+      }
+    });
+  }, []);
+  const [selectUser, setSelectUser] = useState<User | null>(null);
+  const [perItemList, setPerItemList] = useState<PermissionItem[]>([]);
 
-   useEffect(() => {
-     if (selectUser) {
-       const tables = ["category", "user"];
-       const result: PermissionItem[] = [];
-       for (const i in tables) {
-         const perItem: PermissionItem = {
-           title: tables[i],
-           read:
-             selectUser.permission?.includes(`${tables[i]}.r`) ||
-             selectUser.permission?.includes(`${tables[i]}.*`) ||
-             false,
-           create:
-             selectUser.permission?.includes(`${tables[i]}.c`) ||
-             selectUser.permission?.includes(`${tables[i]}.*`) ||
-             false,
-           delete:
-             selectUser.permission?.includes(`${tables[i]}.d`) ||
-             selectUser.permission?.includes(`${tables[i]}.*`) ||
-             false,
-           update:
-             selectUser.permission?.includes(`${tables[i]}.u`) ||
-             selectUser.permission?.includes(`${tables[i]}.*`) ||
-             false,
-         };
-         result.push(perItem);
-       }
-       setPerItemList(result);
-     }
-   }, [selectUser]);
+  useEffect(() => {
+    if (selectUser) {
+      const tables = ["category", "user"];
+      const result: PermissionItem[] = [];
+      for (const i in tables) {
+        const perItem: PermissionItem = {
+          title: tables[i],
+          read:
+            selectUser.permission?.includes(`${tables[i]}.r`) ||
+            selectUser.permission?.includes(`${tables[i]}.*`) ||
+            false,
+          create:
+            selectUser.permission?.includes(`${tables[i]}.c`) ||
+            selectUser.permission?.includes(`${tables[i]}.*`) ||
+            false,
+          delete:
+            selectUser.permission?.includes(`${tables[i]}.d`) ||
+            selectUser.permission?.includes(`${tables[i]}.*`) ||
+            false,
+          update:
+            selectUser.permission?.includes(`${tables[i]}.u`) ||
+            selectUser.permission?.includes(`${tables[i]}.*`) ||
+            false,
+        };
+        result.push(perItem);
+      }
+      setPerItemList(result);
+    }
+  }, [selectUser]);
 
   const { t } = useTranslation();
 
+  function updatePer(type: string, index: number, user: User) {
+    const data = perItemList.slice().map((item, i) => {
+      if (i == index) {
+        const cloneObj = {
+          ...item,
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cloneObj as any)[`${type}`] = !(cloneObj as any)[`${type}`];
+        return cloneObj;
+      }
+      return item;
+    });
 
+    let perTemp = ``;
+    for (const i in data) {
+      if (data[i].create) {
+        perTemp += `${data[i].title}.c,`;
+      }
+      if (data[i].read) {
+        perTemp += `${data[i].title}.r,`;
+      }
+      if (data[i].update) {
+        perTemp += `${data[i].title}.u,`;
+      }
+      if (data[i].delete) {
+        perTemp += `${data[i].title}.d,`;
+      }
+    }
 
-   function updatePer(type: string, index: number, user: User) {
-     const data = perItemList.slice().map((item, i) => {
-       if (i == index) {
-         const cloneObj = {
-           ...item,
-         };
-         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-         (cloneObj as any)[`${type}`] = !(cloneObj as any)[`${type}`];
-         return cloneObj;
-       }
-       return item;
-     });
+    apis.user
+      .update({
+        ...user,
+        permission: perTemp,
+      })
+      .then((res) => {
+        console.log(res);
+        setPerItemList(data);
+      });
+  }
 
-     let perTemp = ``;
-     for (const i in data) {
-       if (data[i].create) {
-         perTemp += `${data[i].title}.c,`;
-       }
-       if (data[i].read) {
-         perTemp += `${data[i].title}.r,`;
-       }
-       if (data[i].update) {
-         perTemp += `${data[i].title}.u,`;
-       }
-       if (data[i].delete) {
-         perTemp += `${data[i].title}.d,`;
-       }
-     }
+  // // Pagination
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPageData, setCurrentPageData] = useState([]);
+  // const limit = 3;
 
-     apis.user
-       .update({
-         ...user,
-         permission: perTemp,
-       })
-       .then((res) => {
-        console.log(res)
-         setPerItemList(data);
-       });
-   }
-  
+  // useEffect(() => {
+  //   const offset = (currentPage - 1) * limit;
+  //   apis.product.paginationProduct(offset, limit).then((response) => {
+  //     console.log("Category data:", response.data);
+  //     const newData = users.slice(offset, offset + limit) ?? [];
+  //     setCurrentPageData(newData);
+  //   });
+  // }, [currentPage, productStore.data]);
+
+  // const totalPage = Math.ceil((users.length ?? 0) / limit);
+  // const handlePageChange = (event: any, page: React.SetStateAction<number>) => {
+  //   setCurrentPage(page);
+  // };
+
+  // //search category (su dung debounce cua lodash)
+  // const [search, setSearch] = useState("");
+  // const [searchResult, setSearchResult] = useState([]);
+  // // Kiểm tra xem có kết quả tìm kiếm không, nếu có thì hiển thị kết quả tìm kiếm, nếu không thì hiển thị dữ liệu trang hiện tại
+  // const dataToShow = searchResult.length > 0 ? searchResult : currentPageData;
+
+  // const performSearch = () => {
+  //   debouncedSearch(search);
+  // };
+
+  // const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearch(event.target.value);
+  // };
+
+  // const debouncedSearch = debounce((value: string) => {
+  //   console.log("Debounced search called with value:", value);
+  //   if (value === "") {
+  //     setSearchResult([]);
+  //   } else {
+  //     apis.user
+  //       .searchUser(value)
+  //       .then((response) => {
+  //         console.log("Search API response:", response);
+  //         setSearchResult(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error searching category:", error);
+  //       });
+  //   }
+  // }, 300);
+
+  // useEffect(() => {
+  //   return () => {
+  //     debouncedSearch.cancel();
+  //   };
+  // }, [debouncedSearch]);
+
   return (
     <>
+      {/* <div className="search-bar">
+        <h1>{t("category")}</h1>
+        <div>
+          <input
+            type="text"
+            placeholder="Search for category"
+            value={search}
+            onChange={handleInputChange}
+          />
+          <button
+            onClick={performSearch}
+            style={{
+              marginLeft: "10px",
+              padding: "5px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              height: "40px",
+            }}
+          >
+            Tìm kiếm
+          </button>
+        </div>
+      </div> */}
       {selectUser && (
         <div className="per_box">
           <div className="per_content">
@@ -261,7 +340,6 @@ const ProductAdmin: React.FC = () => {
                             role: e.target.value as Role,
                           })
                           .then((res) => {
-                            
                             setUsers(
                               users.map((item) => {
                                 if (item.id == user.id) {
@@ -334,6 +412,13 @@ const ProductAdmin: React.FC = () => {
           </Table>
         </div>
       )}
+      {/* <Pagination
+        count={totalPage} // Use the calculated total pages
+        page={currentPage} // Current page
+        onChange={handlePageChange} // Handle page change
+        shape="rounded"
+        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      /> */}
     </>
   );
 };
